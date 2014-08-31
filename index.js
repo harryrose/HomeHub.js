@@ -139,18 +139,6 @@ var getTableValues = function (body, titles) {
 
 };
 
-var fetchDBs = function(string) {
-	var pattern = /^\s*([-0-9.]+)\s*dB\s*\/\s*([-0-9.]+)\s*dB/;
-	var matches = pattern.exec(string);
-	var result = null;
-
-	if(matches !== null) {
-		result = { 'down': matches[1], 'up': matches[2] };
-	}
-
-	return result;
-};
-
 var getDataFromTableRows = function(targetHost, targetPage, password, tablerows, callback)
 {
 	getRequest(targetHost,targetPage, function(session,body) {

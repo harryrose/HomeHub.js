@@ -1,6 +1,6 @@
 {
   "name": "HomeHub",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Allows you to relatively easily scrape data from the BT HomeHub 3 user interface.  This is useful if you want to get values which arent available via the UPnP interface.",
   "main": "index.js",
   "scripts": {

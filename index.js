@@ -3,7 +3,7 @@ var http = require('http');
 var sessionCookieName = 'rg_cookie_session_id'; 
 
 
-var currentSession = null;
+var currentSession = null; 
 
 var getPageUrl = function(hostname,targetPage) {
 	return 'http://'+hostname+'/index.cgi?active_page='+targetPage;
@@ -26,13 +26,28 @@ var getSessionIdFromResult = function(result) {
 	return id;
 };
 
+var getParsedDoc = function(str) {
+	var dom = require('xmldom').DOMParser;
+
+	return new dom({locator:{},
+	    errorHandler:{
+	    			warning: function() {},
+	    		error: function(){},
+	    		fatalError:function(){}
+			}
+	    }).parseFromString(str);
+};
+
 var getInputValue = function (body,name) {
 	var xpath = require('xpath');
-	var dom = require('xmldom').DOMParser;
-	var doc = new dom().parseFromString(body);
+	var doc = getParsedDoc(body);
 	var nodes = xpath.select1("//INPUT[@name='"+name+"']/@value",doc);
 
-	return nodes.value;
+	if(nodes === undefined || nodes == null) {
+		return undefined;
+	} else {
+		return nodes.value;
+	}
 };
 
 var getAuthKey = function(body) { return getInputValue(body,'auth_key'); }
@@ -125,8 +140,7 @@ var postLogin = function(targetHost,targetPage, passwordPlain, authKey, sessionI
 
 var getTableValues = function (body, titles) {	
 	var xpath = require('xpath');
-	var dom = require('xmldom').DOMParser;
-	var doc = new dom().parseFromString(body);
+	var doc = getParsedDoc(body);
 
 	var result = {};
 
@@ -143,10 +157,13 @@ var getTableValues = function (body, titles) {
 
 var getDataFromTableRows = function(targetHost, targetPage, password, tablerows, callback)
 {
+	console.log("Current Session: "+currentSession);
+
 	getRequest(targetHost,targetPage, currentSession, function(session,body) {
-		var authKey = getAuthKey(body);
-		var requestKey = getRequestId(body);
+		console.log("Got session: "+session);
 		if(session != null) { // we've had a new session cookie...
+			var authKey = getAuthKey(body);
+			var requestKey = getRequestId(body);
 			currentSession = session;
 			postLogin(targetHost,targetPage, password, authKey, session, requestKey, function (status,body) {
 				callback(getTableValues(body,tablerows));
@@ -157,5 +174,4 @@ var getDataFromTableRows = function(targetHost, targetPage, password, tablerows,
 	});
 }
 
-exports.getRequest = getRequest;
 exports.getDataFromTableRows = getDataFromTableRows;

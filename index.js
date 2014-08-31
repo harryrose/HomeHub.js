@@ -3,6 +3,8 @@ var http = require('http');
 var sessionCookieName = 'rg_cookie_session_id'; 
 
 
+var currentSession = null;
+
 var getPageUrl = function(hostname,targetPage) {
 	return 'http://'+hostname+'/index.cgi?active_page='+targetPage;
 };
@@ -141,12 +143,17 @@ var getTableValues = function (body, titles) {
 
 var getDataFromTableRows = function(targetHost, targetPage, password, tablerows, callback)
 {
-	getRequest(targetHost,targetPage, function(session,body) {
+	getRequest(targetHost,targetPage, currentSession, function(session,body) {
 		var authKey = getAuthKey(body);
 		var requestKey = getRequestId(body);
-		postLogin(targetHost,targetPage, password, authKey, session, requestKey, function (status,body) {
+		if(session != null) { // we've had a new session cookie...
+			currentSession = session;
+			postLogin(targetHost,targetPage, password, authKey, session, requestKey, function (status,body) {
+				callback(getTableValues(body,tablerows));
+			});
+		} else {
 			callback(getTableValues(body,tablerows));
-		});
+		}
 	});
 }
 

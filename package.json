@@ -1,0 +1,26 @@
+{
+  "name": "HomeHub",
+  "version": "0.0.1",
+  "description": "Allows you to relatively easily scrape data from the BT HomeHub 3 user interface.  This is useful if you want to get values which arent available via the UPnP interface.",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harryrose/HomeHub.js.git"
+  },
+  "author": "Harry Rose",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/harryrose/HomeHub.js/issues"
+  },
+  "homepage": "https://github.com/harryrose/HomeHub.js"
+
+  "requires": {
+	"http": "*",
+	"xpath": "0.0.7",
+	"xmldom": "0.1.19",
+	"querystring":"0.2.0"
+	"MD5":"1.2.1",
+  }
+}
